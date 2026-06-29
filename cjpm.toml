@@ -1,0 +1,4 @@
+[package]
+name = "demo"
+version = "1.0.0"
+cjc-version = "0.53.1"
