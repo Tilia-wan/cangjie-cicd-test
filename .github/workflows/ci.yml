@@ -4,24 +4,20 @@ on: [push] # 任何代码提交都会触发
 jobs:
   test:
     runs-on: ubuntu-latest
+    # 核心魔法在这里：直接指定使用社区打包好的仓颉 Docker 镜像
+    container:
+      image: zxilly/cangjie:latest 
+      
     steps:
       - name: 检出代码 (Checkout)
-        uses: actions/checkout@v4  # 这里的 v4 帮你解决了刚才的警告
+        uses: actions/checkout@v4
 
-      - name: 配置仓颉环境 (Setup Cangjie)
+      - name: 验证仓颉环境 (Check Environment)
         run: |
-          echo "开始配置仓颉环境..."
+          echo "当前的仓颉编译器版本是："
+          cjc --version
           
-          # 1. 赋予仓颉编译器可执行权限（防止报 Permission denied 错误）
-          # 注意：如果你的文件夹不叫 cangjie，请把下面这行的 cangjie 改成你的文件夹名
-          chmod +x $GITHUB_WORKSPACE/jgrapht-jgrapht-1.5.3/bin/*
-          
-          # 2. 配置系统环境变量，告诉流水线仓颉装在哪里
-          # 同样，如果文件夹不叫 cangjie，请修改下面两行
-          echo "CANGJIE_HOME=$GITHUB_WORKSPACE/jgrapht-jgrapht-1.5.3" >> $GITHUB_ENV
-          echo "$GITHUB_WORKSPACE/jgrapht-jgrapht-1.5.3/bin" >> $GITHUB_PATH
-
-      - name: 运行单元测试 (Run Tests)
+      - name: 运行自动化单元测试 (Run Tests)
         run: |
-          cjc --version  # 打印一下版本 证明环境装好了
-          cjpm test      # 执行测试命令
+          echo "开始执行测试..."
+          cjpm test
