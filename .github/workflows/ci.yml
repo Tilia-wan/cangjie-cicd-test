@@ -6,22 +6,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码 (Checkout)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # 这里的 v4 帮你解决了刚才的警告
 
       - name: 配置仓颉环境 (Setup Cangjie)
         run: |
           echo "开始配置仓颉环境..."
-          # ----------------------------------------------------
-          # 如果你有公开下载链接，把下面这行前面的 # 去掉，并换成你的链接：
-          # wget -O cangjie-sdk.tar.gz https://你的下载链接.tar.gz
-          # ----------------------------------------------------
           
-          # 解压你上传的(或刚才下载的)SDK压缩包
-          tar -zxf cangjie-sdk.tar.gz
+          # 1. 赋予仓颉编译器可执行权限（防止报 Permission denied 错误）
+          # 注意：如果你的文件夹不叫 cangjie，请把下面这行的 cangjie 改成你的文件夹名
+          chmod +x $GITHUB_WORKSPACE/jgrapht-jgrapht-1.5.3/bin/*
           
-          # 配置系统环境变量，告诉流水线仓颉装在哪里
-          echo "CANGJIE_HOME=$GITHUB_WORKSPACE/cangjie" >> $GITHUB_ENV
-          echo "$GITHUB_WORKSPACE/cangjie/bin" >> $GITHUB_PATH
+          # 2. 配置系统环境变量，告诉流水线仓颉装在哪里
+          # 同样，如果文件夹不叫 cangjie，请修改下面两行
+          echo "CANGJIE_HOME=$GITHUB_WORKSPACE/jgrapht-jgrapht-1.5.3" >> $GITHUB_ENV
+          echo "$GITHUB_WORKSPACE/jgrapht-jgrapht-1.5.3/bin" >> $GITHUB_PATH
 
       - name: 运行单元测试 (Run Tests)
         run: |
