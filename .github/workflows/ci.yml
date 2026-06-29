@@ -23,5 +23,5 @@ jobs:
 
       - name: 运行单元测试 (Run Tests)
         run: |
-          cjc --version  # 打印一下版本，证明环境装好了
+          cjc --version  # 打印一下版本 证明环境装好了
           cjpm test      # 执行测试命令
