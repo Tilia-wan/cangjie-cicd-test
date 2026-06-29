@@ -1,0 +1,29 @@
+name: Cangjie Unit Test CI
+on: [push] # 任何代码提交都会触发
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码 (Checkout)
+        uses: actions/checkout@v3
+
+      - name: 配置仓颉环境 (Setup Cangjie)
+        run: |
+          echo "开始配置仓颉环境..."
+          # ----------------------------------------------------
+          # 如果你有公开下载链接，把下面这行前面的 # 去掉，并换成你的链接：
+          # wget -O cangjie-sdk.tar.gz https://你的下载链接.tar.gz
+          # ----------------------------------------------------
+          
+          # 解压你上传的(或刚才下载的)SDK压缩包
+          tar -zxf cangjie-sdk.tar.gz
+          
+          # 配置系统环境变量，告诉流水线仓颉装在哪里
+          echo "CANGJIE_HOME=$GITHUB_WORKSPACE/cangjie" >> $GITHUB_ENV
+          echo "$GITHUB_WORKSPACE/cangjie/bin" >> $GITHUB_PATH
+
+      - name: 运行单元测试 (Run Tests)
+        run: |
+          cjc --version  # 打印一下版本，证明环境装好了
+          cjpm test      # 执行测试命令
