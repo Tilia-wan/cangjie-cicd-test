@@ -1,23 +1,31 @@
 name: Cangjie Unit Test CI
-on: [push] # 任何代码提交都会触发
+on: [push]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    # 核心魔法在这里：直接指定使用社区打包好的仓颉 Docker 镜像
-    container:
-      image: zxilly/cangjie:latest 
-      
     steps:
       - name: 检出代码 (Checkout)
         uses: actions/checkout@v4
 
-      - name: 验证仓颉环境 (Check Environment)
+      - name: 下载并安装仓颉环境 (Install Cangjie)
         run: |
-          echo "当前的仓颉编译器版本是："
+          echo "开始下载仓颉环境..."
+          # 从官方渠道下载最新版的仓颉 SDK
+          wget -q https://cangjie-lang.cn/download/cangjie-0.53.4-linux_x64.tar.gz
+          
+          echo "开始解压..."
+          tar -zxf cangjie-0.53.4-linux_x64.tar.gz
+          
+          echo "配置环境变量..."
+          # 把仓颉装进系统里，这样就不怕 command not found 了
+          echo "CANGJIE_HOME=$GITHUB_WORKSPACE/cangjie-0.53.4" >> $GITHUB_ENV
+          echo "$GITHUB_WORKSPACE/cangjie-0.53.4/bin" >> $GITHUB_PATH
+
+      - name: 验证并运行单元测试 (Run Tests)
+        run: |
+          # 验证 cjc 是否安装成功
           cjc --version
           
-      - name: 运行自动化单元测试 (Run Tests)
-        run: |
-          echo "开始执行测试..."
+          # 执行测试
           cjpm test
